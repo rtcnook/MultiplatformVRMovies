@@ -54,8 +54,9 @@ kotlin {
             // Coil 3 KMP
             implementation("io.coil-kt.coil3:coil-compose:3.0.4")
             implementation("io.coil-kt.coil3:coil-network-ktor3:3.0.4")
-            // Ktor HTTP engine (Desktop/iOS)
+            // Ktor HTTP client
             implementation("io.ktor:ktor-client-core:3.0.3")
+            implementation("io.ktor:ktor-client-cio:3.0.3")
             
             // GitLive Firebase (跨平台 Firebase)
             implementation("dev.gitlive:firebase-database:2.1.0")
@@ -75,6 +76,8 @@ kotlin {
             // 显式指定 JVM 版 GitLive Firebase，防止误用 Android 版
             implementation("dev.gitlive:firebase-app-jvm:2.1.0")
             implementation("dev.gitlive:firebase-database-jvm:2.1.0")
+            // Ktor OkHttp 引擎用于 Desktop 图片加载
+            implementation("io.ktor:ktor-client-okhttp:3.0.3")
         }
     }
 }

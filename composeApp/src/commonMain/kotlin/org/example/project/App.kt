@@ -2,6 +2,9 @@ package org.example.project
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
+import coil3.ImageLoader
+import coil3.compose.setSingletonImageLoaderFactory
+import coil3.network.ktor3.KtorNetworkFetcherFactory
 import org.example.project.domain.FilmItemModel
 import org.example.project.ui.DetailScreen
 import org.example.project.ui.IntroScreen
@@ -23,6 +26,15 @@ object AppNavigator {
 
 @Composable
 fun App() {
+    // 配置 Coil 3 的网络引擎
+    setSingletonImageLoaderFactory { context ->
+        ImageLoader.Builder(context)
+            .components {
+                add(KtorNetworkFetcherFactory())
+            }
+            .build()
+    }
+
     MaterialTheme {
         // 用列表作为返回栈
         val backStack = remember { mutableStateListOf<Screen>(Screen.Splash) }

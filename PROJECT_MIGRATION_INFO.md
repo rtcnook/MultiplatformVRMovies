@@ -15,71 +15,64 @@
 | **UI 框架** | Jetpack Compose | Compose Multiplatform | ✅ 已迁移 |
 | **图片加载** | Coil 2.x | Coil 3.x (OkHttp/Ktor) | ✅ 已修复 |
 | **状态管理** | LiveData | StateFlow / ViewModel | ✅ 已转换 |
-| **后台数据** | Firebase Android SDK | GitLive Firebase (Multiplatform) | ✅ 已接入 |
-| **序列化** | Gson | kotlinx.serialization | ✅ 已转换 |
+| **后台数据** | Firebase Android SDK | GitLive Firebase / Local JSON | ✅ 已接入 |
+| **序列化** | kotlinx.serialization | kotlinx.serialization | ✅ 已转换 |
 | **导航** | Intent / Activity | Sealed Class + Back Stack | ✅ 已实现 |
 
 ---
 
 ## 2. 如何运行 (Startup Commands)
 
-在项目根目录下执行以下命令：
-
 ### 2.1 Android 运行
 ```bash
-# 运行 Android 应用
 ./gradlew :composeApp:installDebug
 ```
-*注：也可在 Android Studio 中直接运行 `composeApp` 配置。*
 
 ### 2.2 Desktop (Windows/macOS/Linux) 运行
 ```bash
-# 启动桌面端应用
 ./gradlew :composeApp:run
 ```
-*注：桌面端已在 `main.kt` 中硬编码 Firebase 初始化参数，无需 `google-services.json` 插件。*
 
 ### 2.3 iOS 运行 (需要 macOS)
 ```bash
-# 启动 iOS 模拟器运行
 ./gradlew :composeApp:iosSimulatorArm64Run
 ```
-*注：建议使用 Xcode 打开 `iosApp/iosApp.xcworkspace` 运行，并确保已放入 `GoogleService-Info.plist`。*
 
 ---
 
-## 3. 关键修复说明
+## 3. 核心机制说明
 
-### 3.1 Firebase 初始化
-- **Android**: 依赖 `google-services` 插件读取 `composeApp/google-services.json`。
-- **Desktop**: 由于桌面端不支持该插件，在 `jvmMain/main.kt` 中手动执行 `Firebase.initialize()`。
-- **数据路径**: 修正了 Firebase 中 `Upcomming` (含拼写错误) 的路径映射。
+### 3.1 混合数据源策略 (Data Source Strategy)
+为了保证各平台的稳定性和演示效果，采用了以下策略：
+- **Android**: 继续使用 **Firebase Realtime Database**。支持动态更新。
+- **Desktop / iOS**: 使用 **本地 JSON 文件** (`composeResources/files/database.json`)。
+- **工厂模式**: 通过 `createMainRepository()` 自动根据平台切换实现，UI 层完全解耦。
 
-### 3.2 导航与返回键
-- **Back Stack**: 在 `App.kt` 中维护了一个 `mutableStateListOf<Screen>` 栈。
-- **返回处理**: 通过 `AppNavigator` 接口，使 Android 端的系统返回键能触发 `backStack.removeLast()`。
+### 3.2 图片加载优化 (Coil 3)
+- **网络引擎**: Android 端使用 `OkHttp`，Desktop 端通过 `Ktor (OkHttp/CIO)` 引擎加载。
+- **配置**: 在 `App.kt` 中通过 `setSingletonImageLoaderFactory` 统一配置了 `KtorNetworkFetcherFactory`。
 
-### 3.3 UI 细节修复
-- **输入框**: 解决了 `GradientTextField` 渐变边框在圆角处被裁剪的问题。
-- **海报卡片**: 统一了海报尺寸（140x200dp），解决了在 `LazyRow` 中撑满全屏的布局错误。
-- **详情页**: 优化了信息栏字体和图标大小，适配 IMDB/时长/年份在同一行显示。
-
----
-
-## 4. 待办事项
-
-- [ ] **iOS 配置**: 下载并放置 `GoogleService-Info.plist` 到 iOS 工程中。
-- [ ] **搜索逻辑**: 在 `MainViewModel` 中实现 `SearchBar` 的实时过滤。
-- [ ] **视频播放**: 详情页的 Trailer 链接需接入跨平台播放器（如 Compose-Video）或系统浏览器。
-- [ ] **图片加载验证**: 验证各平台在大批量数据下的海报加载稳定性。
+### 3.3 导航系统
+- **统一返回逻辑**: 在 `commonMain` 中维护导航栈，通过 `AppNavigator` 对象与 Android 原生返回键挂钩，实现了完美的跨平台返回体验。
 
 ---
 
-## 5. 项目结构索引
-- `composeApp/src/commonMain/kotlin/org/example/project/`:
-    - `App.kt`: 导航与页面组装。
-    - `ui/`: 各功能页面 (Splash, Login, Main, Detail)。
-    - `repository/`: Firebase 数据层。
-    - `viewmodel/`: 业务逻辑与状态管理。
-- `composeApp/src/androidMain/`: Android 特有配置 (MainActivity)。
-- `composeApp/src/jvmMain/`: Desktop 特有配置 (main.kt)。
+## 4. 迁移期间修复的关键问题
+
+1.  **Firebase Desktop 崩溃**: 移除了在 JVM 上无法自动初始化的 Firebase 代码，改用本地 JSON 方案。
+2.  **资源路径规范**: 修复了 `database.json` 位置错误导致无法生成 Resource Accessors 的问题（必须放在 `files/` 目录下）。
+3.  **类型推导错误**: 修复了 `MainViewModel` 丢失导入导致的 `collectAsState` 和 `LazyRow` 编译错误。
+4.  **UI 布局偏差**: 修正了海报在 `LazyRow` 中填满全屏的问题，固定为 `140x200dp`。
+
+---
+
+## 5. 项目状态
+目前项目已达到 **MVP (最小可行性产品)** 阶段，Android 和 Desktop 均可正常运行、显示列表、进入详情页。
+
+---
+
+## 6. Git 提交记录参考
+- 初始迁移：完成 UI 转换。
+- 导航增强：实现跨平台返回栈。
+- 稳定性修复：解决 Firebase 桌面端兼容性与资源路径问题。
+- 图片增强：配置 Coil 3 全平台网络加载。
