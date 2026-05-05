@@ -17,4 +17,27 @@ class ApplicationTest {
         assertEquals(HttpStatusCode.OK, response.status)
         assertEquals("Ktor: ${Greeting().greet()}", response.bodyAsText())
     }
+
+    @Test
+    fun testMoviesApi() = testApplication {
+        application {
+            module()
+        }
+        val response = client.get("/api/movies")
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(ContentType.Application.Json, response.contentType()?.withoutParameters())
+        val body = response.bodyAsText()
+        assertTrue(body.contains("\"Items\""))
+        assertTrue(body.contains("\"Upcomming\""))
+    }
+
+    @Test
+    fun testFilesRoute() = testApplication {
+        application {
+            module()
+        }
+        val response = client.get("/files/database.json")
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertTrue(response.bodyAsText().contains("\"Items\""))
+    }
 }

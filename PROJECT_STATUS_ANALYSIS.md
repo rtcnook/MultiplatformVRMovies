@@ -31,15 +31,39 @@ This means the current Web target can compile and package. Runtime behavior shou
 
 ## Important Findings
 
-1. `composeApp/build.gradle.kts` uses Kotlin `2.3.20` from the version catalog, but applies `kotlin("plugin.serialization") version "2.0.21"` directly. This should be unified to avoid compiler/plugin mismatch risk.
+1. Android no longer uses Firebase for movie data. It now uses `ServerMainRepository`, which requests the local Ktor server at `http://10.0.2.2:8080/api/movies` when running in an Android emulator.
 
-2. `composeApp/src/commonMain/kotlin/org/example/project/ImageLoader.kt` declares `expect fun getAsyncImageLoader(...)`, but actual implementations currently exist for Android, JVM, and WasmJS only. iOS is missing an actual implementation, so iOS builds are likely broken after the Web image-loader change.
+2. The `server` module exposes movie data from `composeApp/src/commonMain/composeResources/files/database.json` through `GET /api/movies`. It also exposes the same files directory through `/files/*` for image/static asset access.
 
-3. `composeApp` and `shared` manually create `webMain` and connect it to `wasmJsMain`. Gradle warns that this prevents the default Kotlin hierarchy template from being applied correctly.
+3. `composeApp/build.gradle.kts` uses Kotlin `2.3.20` from the version catalog, but applies `kotlin("plugin.serialization") version "2.0.21"` directly. This should be unified to avoid compiler/plugin mismatch risk.
 
-4. `PROJECT_MIGRATION_INFO.md` and some source comments contain mojibake text. This does not necessarily block builds, but the project documentation and comments need an encoding cleanup pass.
+4. `composeApp/src/commonMain/kotlin/org/example/project/ImageLoader.kt` declares `expect fun getAsyncImageLoader(...)`, but actual implementations currently exist for Android, JVM, and WasmJS only. iOS is missing an actual implementation, so iOS builds are likely broken after the Web image-loader change.
 
-5. `server/bin/` appears to be generated output. It is now ignored through `**/bin/` in `.gitignore`.
+5. `composeApp` and `shared` manually create `webMain` and connect it to `wasmJsMain`. Gradle warns that this prevents the default Kotlin hierarchy template from being applied correctly.
+
+6. `PROJECT_MIGRATION_INFO.md` and some source comments contain mojibake text. This does not necessarily block builds, but the project documentation and comments need an encoding cleanup pass.
+
+7. `server/bin/` appears to be generated output. It is now ignored through `**/bin/` in `.gitignore`.
+
+## Android Server Data Source
+
+To run Android with the local server:
+
+```powershell
+.\gradlew.bat :server:run
+```
+
+Then install/run the Android app. In the Android emulator, `10.0.2.2` maps back to the host machine, so the app can reach the server at `http://10.0.2.2:8080`.
+
+If running on a physical Android device, replace the Android server base URL with the host computer's LAN IP address.
+
+Verified after the switch:
+
+```powershell
+.\gradlew.bat :server:test :composeApp:compileDebugKotlinAndroid --stacktrace
+```
+
+Result: build and tests completed successfully.
 
 ## Recommended Next Steps
 

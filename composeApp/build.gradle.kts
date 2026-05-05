@@ -9,7 +9,6 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
     kotlin("plugin.serialization") version "2.0.21"
-    id("com.google.gms.google-services")
 }
 
 kotlin {
@@ -48,13 +47,8 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
-            // Android 平台 Firebase 需要显式声明协程 Android 扩展
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
-            // Coil OkHttp 引擎（Android 专用）
             implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.4")
-            // Firebase (Android)
-            implementation("dev.gitlive:firebase-database:1.13.0")
-            // Ktor CIO for Android
             implementation("io.ktor:ktor-client-cio:3.0.3")
         }
         commonMain.dependencies {
