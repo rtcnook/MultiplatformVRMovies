@@ -19,11 +19,6 @@ sealed class Screen {
     data class Detail(val film: FilmItemModel) : Screen()
 }
 
-// 暴露一个全局的"可供平台调用的返回函数"
-object AppNavigator {
-    var onBack: (() -> Boolean)? = null
-}
-
 @Composable
 fun App() {
     // 配置 Coil 3 的网络引擎
@@ -39,19 +34,6 @@ fun App() {
         // 用列表作为返回栈
         val backStack = remember { mutableStateListOf<Screen>(Screen.Splash) }
         val currentScreen = backStack.last()
-
-        // 注册返回处理函数，供各平台（MainActivity 等）调用
-        DisposableEffect(Unit) {
-            AppNavigator.onBack = {
-                if (backStack.size > 1) {
-                    backStack.removeLastOrNull()
-                    true // 已消耗，不退出 App
-                } else {
-                    false // 没有更多页面，让平台自行退出
-                }
-            }
-            onDispose { AppNavigator.onBack = null }
-        }
 
         fun navigate(screen: Screen) {
             backStack.add(screen)
