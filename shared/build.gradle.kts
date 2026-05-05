@@ -18,6 +18,17 @@ kotlin {
     
     jvm()
     
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+    }
+    
+/*
+    js {
+        browser()
+    }
+*/
+    
     sourceSets {
         commonMain.dependencies {
             // put your Multiplatform dependencies here
@@ -25,6 +36,13 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
+        
+        val webMain by creating {
+            dependsOn(commonMain.get())
+        }
+        
+        wasmJsMain.get().dependsOn(webMain)
+        // jsMain.get().dependsOn(webMain)
     }
 }
 

@@ -31,6 +31,19 @@ kotlin {
     
     jvm()
     
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+        binaries.executable()
+    }
+
+/*
+    js {
+        browser()
+        binaries.executable()
+    }
+*/
+    
     sourceSets {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
@@ -39,6 +52,8 @@ kotlin {
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
             // Coil OkHttp 引擎（Android 专用）
             implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.4")
+            // Firebase (Android)
+            implementation("dev.gitlive:firebase-database:1.13.0")
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -51,15 +66,10 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(projects.shared)
             
-            // Coil 3 KMP
-            implementation("io.coil-kt.coil3:coil-compose:3.0.4")
-            implementation("io.coil-kt.coil3:coil-network-ktor3:3.0.4")
             // Ktor HTTP client
             implementation("io.ktor:ktor-client-core:3.0.3")
             implementation("io.ktor:ktor-client-cio:3.0.3")
             
-            // GitLive Firebase (跨平台 Firebase)
-            implementation("dev.gitlive:firebase-database:2.1.0")
             
             // Kotlin Serialization
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
@@ -74,11 +84,28 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
             // 显式指定 JVM 版 GitLive Firebase，防止误用 Android 版
-            implementation("dev.gitlive:firebase-app-jvm:2.1.0")
-            implementation("dev.gitlive:firebase-database-jvm:2.1.0")
+            implementation("dev.gitlive:firebase-app-jvm:1.13.0")
+            implementation("dev.gitlive:firebase-database-jvm:1.13.0")
             // Ktor OkHttp 引擎用于 Desktop 图片加载
             implementation("io.ktor:ktor-client-okhttp:3.0.3")
+            // Coil 3 KMP
+            implementation("io.coil-kt.coil3:coil-compose:3.0.4")
+            implementation("io.coil-kt.coil3:coil-network-ktor3:3.0.4")
         }
+        
+        val webMain by creating {
+            dependsOn(commonMain.get())
+            dependencies {
+                implementation(libs.compose.ui)
+                implementation(libs.compose.runtime)
+                implementation(libs.compose.foundation)
+                implementation(libs.compose.material3)
+                implementation(libs.compose.components.resources)
+            }
+        }
+        
+        wasmJsMain.get().dependsOn(webMain)
+        // jsMain.get().dependsOn(webMain)
     }
 }
 
