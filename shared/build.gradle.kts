@@ -19,11 +19,9 @@ kotlin {
     jvm()
     
     @OptIn(ExperimentalWasmDsl::class)
-    /*
     wasmJs {
         browser()
     }
-    */
     
 /*
     js {
@@ -39,14 +37,12 @@ kotlin {
             implementation(libs.kotlin.test)
         }
         
-        /*
         val webMain by creating {
             dependsOn(commonMain.get())
         }
         
         wasmJsMain.get().dependsOn(webMain)
         // jsMain.get().dependsOn(webMain)
-        */
     }
 }
 

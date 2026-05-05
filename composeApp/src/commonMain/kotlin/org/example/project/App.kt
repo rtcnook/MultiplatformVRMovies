@@ -4,7 +4,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
-import coil3.network.ktor3.KtorNetworkFetcherFactory
 import org.example.project.domain.FilmItemModel
 import org.example.project.ui.DetailScreen
 import org.example.project.ui.IntroScreen
@@ -23,11 +22,7 @@ sealed class Screen {
 fun App() {
     // 配置 Coil 3 的网络引擎
     setSingletonImageLoaderFactory { context ->
-        ImageLoader.Builder(context)
-            .components {
-                add(KtorNetworkFetcherFactory())
-            }
-            .build()
+        getAsyncImageLoader(context)
     }
 
     MaterialTheme {
