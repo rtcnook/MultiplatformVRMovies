@@ -51,11 +51,12 @@
 ./gradlew :composeApp:iosSimulatorArm64Run
 ```
 
-### 2.4 Web (WasmJS) 运行
-```bash
-./gradlew :composeApp:wasmJsBrowserDevelopmentRun
-```
-> ⚠️ Web 端目前因部分依赖（Coil/Firebase）尚未完全支持 WasmJS，构建可能存在问题。
+### 2.4 Web (WasmJS) — ⚠️ 暂不可用
+> Web 目标已暂时禁用。原因：`commonMain` 中的 `ktor-client-cio` 和 `Coil 3` 不提供 WasmJS 变体，
+> 启用后会导致 Gradle 依赖解析失败，连带 Android/Desktop 也无法编译。
+> 
+> 待这些库发布 WasmJS 支持后，可在 `composeApp/build.gradle.kts` 和 `shared/build.gradle.kts` 中
+> 取消注释 `wasmJs { ... }` 块和 `webMain` 源码集来重新启用。
 
 ---
 
@@ -117,7 +118,7 @@ MyVRMoviesMultiplatform_/
 - ✅ **Android**: 正常运行，Firebase 数据加载，海报显示，详情页导航。
 - ✅ **Desktop**: 正常运行，本地 JSON 数据，鼠标滚轮横向滚动，窗口尺寸优化。
 - ⏳ **iOS**: 代码就绪，需 macOS 构建验证。
-- ⏳ **Web (WasmJS)**: 基础代码就绪，待部分依赖（Coil/Firebase）完全适配后可用。
+- ❌ **Web (WasmJS)**: 已禁用，`ktor-client-cio` / `Coil 3` 无 WasmJS 变体，待库更新后重新启用。
 
 ---
 
