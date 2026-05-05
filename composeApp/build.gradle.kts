@@ -32,10 +32,12 @@ kotlin {
     jvm()
     
     @OptIn(ExperimentalWasmDsl::class)
+    /*
     wasmJs {
         browser()
         binaries.executable()
     }
+    */
 
 /*
     js {
@@ -66,6 +68,9 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(projects.shared)
             
+            // Coil 3 KMP
+            implementation("io.coil-kt.coil3:coil-compose:3.0.4")
+            implementation("io.coil-kt.coil3:coil-network-ktor3:3.0.4")
             // Ktor HTTP client
             implementation("io.ktor:ktor-client-core:3.0.3")
             implementation("io.ktor:ktor-client-cio:3.0.3")
@@ -88,11 +93,9 @@ kotlin {
             implementation("dev.gitlive:firebase-database-jvm:1.13.0")
             // Ktor OkHttp 引擎用于 Desktop 图片加载
             implementation("io.ktor:ktor-client-okhttp:3.0.3")
-            // Coil 3 KMP
-            implementation("io.coil-kt.coil3:coil-compose:3.0.4")
-            implementation("io.coil-kt.coil3:coil-network-ktor3:3.0.4")
         }
         
+        /*
         val webMain by creating {
             dependsOn(commonMain.get())
             dependencies {
@@ -106,6 +109,7 @@ kotlin {
         
         wasmJsMain.get().dependsOn(webMain)
         // jsMain.get().dependsOn(webMain)
+        */
     }
 }
 
