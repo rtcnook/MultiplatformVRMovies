@@ -1,9 +1,14 @@
 package org.example.project.ui
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -12,8 +17,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import myvrmoviesmultiplatform.composeapp.generated.resources.*
+import myvrmoviesmultiplatform.composeapp.generated.resources.Res
+import myvrmoviesmultiplatform.composeapp.generated.resources.bg2
 import org.example.project.domain.FilmItemModel
+import org.example.project.platformLog
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -21,7 +28,8 @@ fun FilmItem(
     film: FilmItemModel,
     onClick: (FilmItemModel) -> Unit
 ) {
-    // 固定宽度的竖向海报卡片，与原 Android 项目一致
+    platformLog("MyVRMovies", "Render poster for ${film.Title}: ${film.Poster}")
+
     Column(
         modifier = Modifier
             .width(140.dp)

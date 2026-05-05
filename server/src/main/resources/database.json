@@ -1,0 +1,366 @@
+{
+    "Items":  [
+                  {
+                      "Casts":  [
+                                    {
+                                        "Actor":  "Will Smith",
+                                        "PicUrl":  "/media/actors/will-smith.jpg"
+                                    },
+                                    {
+                                        "Actor":  "Martin Lawrence",
+                                        "PicUrl":  "/media/actors/martin-lawrence.jpg"
+                                    },
+                                    {
+                                        "Actor":  "Vanessa Hudgens",
+                                        "PicUrl":  "/media/actors/vanessa-hudgens.jpg"
+                                    },
+                                    {
+                                        "Actor":  "Alexander Ludwig",
+                                        "PicUrl":  "/media/actors/alexander-ludwig.jpg"
+                                    }
+                                ],
+                      "Description":  "When their late police captain gets linked to drug cartels, wisecracking Miami cops Mike Lowrey and Marcus Burnett embark on a dangerous mission to clear his name.",
+                      "Genre":  [
+                                    "Adventure",
+                                    "Action",
+                                    "Comedy",
+                                    "Crime",
+                                    "Drama"
+                                ],
+                      "Imdb":  6.6,
+                      "price":  120,
+                      "Poster":  "/media/posters/bad-boys.jpg",
+                      "Time":  "1h 55m",
+                      "Title":  "Bad Boys",
+                      "Trailer":  "https://www.imdb.com/video/vi3000682009/?playlistId=tt4919268\u0026ref_=tt_ov_vi",
+                      "Year":  2024
+                  },
+                  {
+                      "Casts":  [
+                                    {
+                                        "Actor":  "Timothée Chalamet",
+                                        "PicUrl":  "/media/actors/timothee-chalamet.jpg"
+                                    },
+                                    {
+                                        "Actor":  "Zendaya",
+                                        "PicUrl":  "/media/actors/zendaya.jpg"
+                                    },
+                                    {
+                                        "Actor":  "Rebecca Ferguson",
+                                        "PicUrl":  "/media/actors/rebecca-ferguson.jpg"
+                                    },
+                                    {
+                                        "Actor":  "Javier Bardem",
+                                        "PicUrl":  "/media/actors/javier-bardem.jpg"
+                                    }
+                                ],
+                      "Description":  "Paul Atreides unites with Chani and the Fremen while seeking revenge against the conspirators who destroyed his family.",
+                      "Genre":  [
+                                    "Adventure",
+                                    "Action",
+                                    "Drama"
+                                ],
+                      "Imdb":  8.5,
+                      "price":  120,
+                      "Poster":  "/media/posters/dune-part-two.jpg",
+                      "Time":  "2h 46m",
+                      "Title":  "Dune: Part Two",
+                      "Trailer":  "https://www.imdb.com/video/vi3332425241/?playlistId=tt15239678\u0026ref_=tt_pr_ov_vi",
+                      "Year":  2024
+                  },
+                  {
+                      "Casts":  [
+                                    {
+                                        "Actor":  "Hilary Swank",
+                                        "PicUrl":  "/media/actors/hilary-swank.jpg"
+                                    },
+                                    {
+                                        "Actor":  "Alan Ritchson",
+                                        "PicUrl":  "/media/actors/alan-ritchson.jpg"
+                                    },
+                                    {
+                                        "Actor":  "Don Mike",
+                                        "PicUrl":  "/media/actors/don-mike.jpg"
+                                    },
+                                    {
+                                        "Actor":  "Tamala Jones",
+                                        "PicUrl":  "/media/actors/tamala-jones.jpg"
+                                    }
+                                ],
+                      "Description":  "Inspired by the incredible true story of a hairdresser who single-handedly rallies an entire community to help a widowed father save the life of his critically ill young daughter.",
+                      "Genre":  [
+                                    "Drama"
+                                ],
+                      "Imdb":  7.4,
+                      "price":  120,
+                      "Poster":  "/media/posters/ordinary-angels.jpg",
+                      "Time":  "2h 6m",
+                      "Title":  "Ordinary Angels",
+                      "Trailer":  "https://www.imdb.com/video/vi3745105689/?ref_=tt_vi_i_2",
+                      "Year":  2024
+                  },
+                  {
+                      "Casts":  [
+                                    {
+                                        "Actor":  "Ryan Gosling",
+                                        "PicUrl":  "/media/actors/ryan-gosling.jpg"
+                                    },
+                                    {
+                                        "Actor":  "Emily Blunt",
+                                        "PicUrl":  "/media/actors/emily-blunt.jpg"
+                                    },
+                                    {
+                                        "Actor":  "Aaron Johnson",
+                                        "PicUrl":  "/media/actors/aaron-taylor-johnson.jpg"
+                                    },
+                                    {
+                                        "Actor":  "Hannah Waddingham",
+                                        "PicUrl":  "/media/actors/hannah-waddingham.jpg"
+                                    }
+                                ],
+                      "Description":  "A stuntman, fresh off an almost career-ending accident, has to track down a missing movie star, solve a conspiracy and try to win back the love of his life while still doing his day job. What could possibly go right?",
+                      "Genre":  [
+                                    "Comedy",
+                                    "Action",
+                                    "Drama"
+                                ],
+                      "Imdb":  6.9,
+                      "price":  120,
+                      "Poster":  "/media/posters/the-fall-guy.jpg",
+                      "Time":  "2h 6m",
+                      "Title":  "The Fall Guy",
+                      "Trailer":  "https://www.imdb.com/video/vi1681377049/?ref_=ttvi_vi_imdb_21",
+                      "Year":  2024
+                  },
+                  {
+                      "Casts":  [
+                                    {
+                                        "Actor":  "Sofia Boutella",
+                                        "PicUrl":  "/media/actors/sofia-boutella.png"
+                                    },
+                                    {
+                                        "Actor":  "Ed Skrein",
+                                        "PicUrl":  "/media/actors/ed-skrein.png"
+                                    },
+                                    {
+                                        "Actor":  "Michiel Huisman",
+                                        "PicUrl":  "/media/actors/michiel-huisman.png"
+                                    },
+                                    {
+                                        "Actor":  "Djimon Hounsou",
+                                        "PicUrl":  "/media/actors/djimon-hounsou.png"
+                                    }
+                                ],
+                      "Description":  "A young woman with a mysterious past is tasked with uniting different tribes to fight against an oppressive warlord who threatens their peaceful colony.",
+                      "Genre":  [
+                                    "Adventure",
+                                    "Action",
+                                    "Sci-Fi"
+                                ],
+                      "Imdb":  9,
+                      "price":  120,
+                      "Poster":  "/media/posters/rebel-moon.jpg",
+                      "Time":  "2h 22m",
+                      "Title":  "Rebel Moon",
+                      "Trailer":  "https://www.youtube.com/watch?v=UEJuNHOd8Dw",
+                      "Year":  2023
+                  },
+                  {
+                      "Casts":  [
+                                    {
+                                        "Actor":  "Sydney Sweeney",
+                                        "PicUrl":  "/media/actors/sydney-sweeney.png"
+                                    },
+                                    {
+                                        "Actor":  "Alvaro Morte",
+                                        "PicUrl":  "/media/actors/alvaro-morte.png"
+                                    },
+                                    {
+                                        "Actor":  "Simona Tabasco",
+                                        "PicUrl":  "/media/actors/simona-tabasco.png"
+                                    },
+                                    {
+                                        "Actor":  "Benedetta Porcaroli",
+                                        "PicUrl":  "/media/actors/benedetta-porcaroli.png"
+                                    }
+                                ],
+                      "Description":  "A young woman who possesses the ability to heal others must fight to protect her gift from those who would exploit it.",
+                      "Genre":  [
+                                    "Drama",
+                                    "Fantasy"
+                                ],
+                      "Imdb":  8.3,
+                      "price":  120,
+                      "Poster":  "/media/posters/immaculate.jpg",
+                      "Time":  "1h 36m",
+                      "Title":  "Immaculate",
+                      "Trailer":  "https://www.youtube.com/watch?v=ewxS9Z-XXYo",
+                      "Year":  2023
+                  },
+                  {
+                      "Casts":  [
+                                    {
+                                        "Actor":  "Rebecca Hall",
+                                        "PicUrl":  "/media/actors/rebecca-hall.png"
+                                    },
+                                    {
+                                        "Actor":  "Brian Tyree Henry",
+                                        "PicUrl":  "/media/actors/brian-tyree-henry.png"
+                                    },
+                                    {
+                                        "Actor":  "Dan Stevens",
+                                        "PicUrl":  "/media/actors/dan-stevens.png"
+                                    },
+                                    {
+                                        "Actor":  "Kaylee Hottle",
+                                        "PicUrl":  "/media/actors/kaylee-hottle.png"
+                                    }
+                                ],
+                      "Description":  "Godzilla and Kong must team up to battle a common enemy that threatens to destroy both of their worlds.",
+                      "Genre":  [
+                                    "Action",
+                                    "Adventure",
+                                    "Sci-Fi"
+                                ],
+                      "Imdb":  8.5,
+                      "price":  120,
+                      "Poster":  "/media/posters/godzilla-kong.jpg",
+                      "Time":  "1h 56m",
+                      "Title":  "Godzilla-Kong",
+                      "Trailer":  "https://www.youtube.com/watch?v=qqrpMRDuPfc",
+                      "Year":  2023
+                  },
+                  {
+                      "Casts":  [
+                                    {
+                                        "Actor":  "Colm Meaney",
+                                        "PicUrl":  "/media/actors/colm-meaney.png"
+                                    },
+                                    {
+                                        "Actor":  "Will Attenborough",
+                                        "PicUrl":  "/media/actors/will-attenborough.png"
+                                    },
+                                    {
+                                        "Actor":  "Jeremias Amoore",
+                                        "PicUrl":  "/media/actors/jeremias-amoore.png"
+                                    },
+                                    {
+                                        "Actor":  "Sophie McIntosh",
+                                        "PicUrl":  "/media/actors/sophie-mcintosh.png"
+                                    }
+                                ],
+                      "Description":  "A group of strangers trapped in an elevator must find a way to escape before they run out of air.",
+                      "Genre":  [
+                                    "Thriller",
+                                    "Drama"
+                                ],
+                      "Imdb":  7.5,
+                      "price":  120,
+                      "Poster":  "/media/posters/no-way-up.jpg",
+                      "Time":  "1h 38m",
+                      "Title":  "No Way Up",
+                      "Trailer":  "https://www.youtube.com/watch?v=PSEoAaSswgo",
+                      "Year":  2023
+                  },
+                  {
+                      "Casts":  [
+                                    {
+                                        "Actor":  "Jack Black",
+                                        "PicUrl":  "/media/actors/jack-black.png"
+                                    },
+                                    {
+                                        "Actor":  "Awkwafina",
+                                        "PicUrl":  "/media/actors/awkwafina.png"
+                                    },
+                                    {
+                                        "Actor":  "Viola Davis",
+                                        "PicUrl":  "/media/actors/viola-davis.png"
+                                    },
+                                    {
+                                        "Actor":  "Djimon Hounsou",
+                                        "PicUrl":  "/media/actors/djimon-hounsou.png"
+                                    }
+                                ],
+                      "Description":  "Po and the Furious Five must once again defend the Jade Palace from a new threat.",
+                      "Genre":  [
+                                    "Thriller",
+                                    "Drama"
+                                ],
+                      "Imdb":  7.5,
+                      "price":  120,
+                      "Poster":  "/media/posters/kung-fu-panda-4.jpg",
+                      "Time":  "1h 42m",
+                      "Title":  "Kung Fu Panda 4",
+                      "Trailer":  "https://www.youtube.com/watch?v=_inKs4eeHiI",
+                      "Year":  2024
+                  }
+              ],
+    "Upcomming":  [
+                      {
+                          "Casts":  [
+                                        {
+                                            "Actor":  "Scarlett Johansson",
+                                            "PicUrl":  "/media/actors/scarlett-johansson.jpg"
+                                        },
+                                        {
+                                            "Actor":  "Channing Tatum",
+                                            "PicUrl":  "/media/actors/channing-tatum.jpg"
+                                        },
+                                        {
+                                            "Actor":  "Woody Harrelson",
+                                            "PicUrl":  "/media/actors/woody-harrelson.jpg"
+                                        },
+                                        {
+                                            "Actor":  "Ray Romano",
+                                            "PicUrl":  "/media/actors/ray-romano.jpg"
+                                        }
+                                    ],
+                          "Description":  "Marketing maven Kelly Jones wreaks havoc on launch director Cole Davis\u0027s already difficult task. When the White House deems the mission too important to fail, the countdown truly begins.",
+                          "Genre":  [
+                                        "Comedy",
+                                        "Ramonce"
+                                    ],
+                          "Imdb":  6.6,
+                          "price":  120,
+                          "Poster":  "/media/posters/fly-me-to-the-moon.jpg",
+                          "Time":  "2h 12m",
+                          "Title":  "Fly Me to the Moon",
+                          "Trailer":  "https://www.imdb.com/video/vi2956707353/?playlistId=tt1896747\u0026ref_=tt_ov_vi",
+                          "Year":  2024
+                      },
+                      {
+                          "Casts":  [
+                                        {
+                                            "Actor":  "Jennifer Lopez",
+                                            "PicUrl":  "/media/actors/jennifer-lopez.jpg"
+                                        },
+                                        {
+                                            "Actor":  "Simu Liu",
+                                            "PicUrl":  "/media/actors/simu-liu.jpg"
+                                        },
+                                        {
+                                            "Actor":  "Sterling K. Brown",
+                                            "PicUrl":  "/media/actors/sterling-brown.jpg"
+                                        },
+                                        {
+                                            "Actor":  "Greg Cohan",
+                                            "PicUrl":  "/media/actors/greg-cohan.jpg"
+                                        }
+                                    ],
+                          "Description":  "In a bleak-sounding future, an A.I. soldier has determined that the only way to end war is to end humanity.",
+                          "Genre":  [
+                                        "Action",
+                                        "Adventure",
+                                        "Thriller",
+                                        "Drama"
+                                    ],
+                          "Imdb":  5.6,
+                          "price":  120,
+                          "Poster":  "/media/posters/atlas.jpg",
+                          "Time":  "1h 58m",
+                          "Title":  "Atlas",
+                          "Trailer":  "https://www.imdb.com/video/vi1105249817/?playlistId=tt14856980\u0026ref_=tt_pr_ov_vi",
+                          "Year":  2024
+                      }
+                  ]
+}

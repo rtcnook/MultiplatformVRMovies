@@ -29,15 +29,17 @@ class ApplicationTest {
         val body = response.bodyAsText()
         assertTrue(body.contains("\"Items\""))
         assertTrue(body.contains("\"Upcomming\""))
+        assertTrue(body.contains("/media/posters/bad-boys.jpg"))
+        assertTrue(body.contains("/media/actors/will-smith.jpg"))
     }
 
     @Test
-    fun testFilesRoute() = testApplication {
+    fun testMediaAliasRoute() = testApplication {
         application {
             module()
         }
-        val response = client.get("/files/database.json")
+        val response = client.get("/media/posters/bad-boys.jpg")
         assertEquals(HttpStatusCode.OK, response.status)
-        assertTrue(response.bodyAsText().contains("\"Items\""))
+        assertEquals(ContentType.Image.JPEG, response.contentType()?.withoutParameters())
     }
 }

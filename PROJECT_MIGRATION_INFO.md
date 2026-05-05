@@ -1,130 +1,313 @@
-# MyVRMovies KMP 跨平台迁移项目文档
+# 项目信息说明
 
-本文档记录了从 Android 原生项目 `MyVRMovies` 迁移至 Kotlin Multiplatform (KMP) 项目 `MyVRMoviesMultiplatform_` 的全套架构、技术细节及运行指南。
+本文档只描述当前项目状态，不记录旧的修改历史。
 
----
+## 项目定位
 
-## 1. 项目架构与技术栈
+`MyVRMoviesMultiplatform` 是一个基于 Kotlin Multiplatform 和 Compose Multiplatform 的电影展示项目。项目由跨平台客户端、共享模块、Ktor 服务端和 iOS 宿主工程组成。
 
-本项目采用 **Compose Multiplatform (CMP)** 构建，实现了一套代码运行在 Android、iOS、Desktop 和 Web (WasmJS)。
+当前目标是让 Android、桌面端、Web 和 iOS 使用同一套 UI 与业务模型，并统一从服务端读取电影数据和图片资源。
 
-### 1.1 技术映射表
+## 总体架构
 
-| 功能模块 | Android 原生 | KMP / CMP 方案 | 状态 |
-| :--- | :--- | :--- | :--- |
-| **UI 框架** | Jetpack Compose | Compose Multiplatform | ✅ 已迁移 |
-| **图片加载** | Coil 2.x | Coil 3.x (OkHttp/Ktor) | ✅ 已修复 |
-| **状态管理** | LiveData | StateFlow / ViewModel | ✅ 已转换 |
-| **后台数据** | Firebase Android SDK | GitLive Firebase / Local JSON | ✅ 已接入 |
-| **序列化** | kotlinx.serialization | kotlinx.serialization | ✅ 已转换 |
-| **导航** | Intent / Activity | Sealed Class + Back Stack | ✅ 已实现 |
+项目当前采用“客户端 + 本地服务端”的结构：
 
-### 1.2 版本依赖
-
-| 组件 | 版本 |
-| :--- | :--- |
-| Kotlin | 2.3.20 |
-| Compose Multiplatform | 1.10.3 |
-| Gradle | 8.14.3 |
-| AGP | 8.11.2 |
-| Ktor | 3.4.1 |
-| Coil 3 | 3.0.4 |
-| GitLive Firebase | 1.13.0 |
-
----
-
-## 2. 如何运行 (Startup Commands)
-
-### 2.1 Android 运行
-```bash
-./gradlew :composeApp:installDebug
+```text
+server/src/main/resources/database.json
+        ↓
+Ktor GET /api/movies
+        ↓
+composeApp ServerMainRepository
+        ↓
+Compose UI 渲染电影列表和详情
+        ↓
+Coil 根据 /media/... 加载图片
 ```
 
-### 2.2 Desktop (Windows/macOS/Linux) 运行
-```bash
-./gradlew :composeApp:run
-```
-> 默认窗口大小：420×900dp（可手动调整）
+当前核心状态：
 
-### 2.3 iOS 运行 (需要 macOS)
-```bash
-./gradlew :composeApp:iosSimulatorArm64Run
-```
+- Android、桌面端、Web、iOS 都通过服务端接口读取电影数据。
+- 电影数据来自 `server/src/main/resources/database.json`。
+- 海报和演员图片来自 `server/src/main/resources/media`。
+- 客户端不再依赖 Firebase 作为电影数据源。
+- 客户端不再依赖 `composeApp/src/commonMain/composeResources/files` 中的旧电影资源。
+- 服务端监听 `0.0.0.0:8080`，方便 Android 真机通过局域网访问。
 
-### 2.4 Web (WasmJS) 运行
-```bash
-./gradlew :composeApp:wasmJsBrowserDevelopmentRun
-```
-> ✅ Web 端现已通过 `expect/actual` 适配并恢复使用。
+## 模块职责
 
----
+### composeApp
 
-## 3. 核心机制说明
+`composeApp` 是客户端主模块，包含 Compose Multiplatform UI、页面状态、仓库实现和平台差异代码。
 
-### 3.1 混合数据源策略 (Data Source Strategy)
-为了保证各平台的稳定性和演示效果，采用了以下策略：
-- **Android**: 继续使用 **Firebase Realtime Database**（`FirebaseMainRepository`）。
-- **Desktop / iOS / Web**: 使用 **本地 JSON 文件** (`composeResources/files/database.json`)。
-- **工厂模式**: 通过 `expect/actual fun createMainRepository()` 自动根据平台切换实现，UI 层完全解耦。
+主要职责：
 
-### 3.2 图片加载优化 (Coil 3)
-- **网络引擎**: Android 端使用 `OkHttp`，Desktop 端通过 `Ktor (OkHttp)` 引擎加载。
-- **配置**: 在 `App.kt` 中通过 `setSingletonImageLoaderFactory` 统一配置了 `KtorNetworkFetcherFactory`。
-- **依赖隔离**: Coil 依赖已从 `commonMain` 移至 `androidMain` 和 `jvmMain`，避免 Web 端编译冲突。
+- 展示电影列表、电影详情、演员信息等界面。
+- 通过 `ServerMainRepository` 请求服务端电影数据。
+- 使用 Coil 加载服务端返回的图片。
+- 为 Android、桌面端、Web、iOS 提供平台实际实现。
 
-### 3.3 导航系统
-- **统一返回逻辑**: 在 `commonMain` 中维护导航栈，通过 `AppNavigator` 对象与 Android 原生返回键挂钩，实现了完美的跨平台返回体验。
+关键目录：
 
-### 3.4 Desktop 端滚动优化
-- **鼠标滚轮横向滚动**: 通过自定义 `ScrollableLazyRow` 组件，将鼠标滚轮的垂直事件转为水平滚动，解决了 Desktop 端 `LazyRow` 无法用鼠标滚轮浏览的问题。
-
----
-
-## 4. 项目结构
-
-```
-MyVRMoviesMultiplatform_/
-├── composeApp/
-│   └── src/
-│       ├── commonMain/       # 共享 UI、ViewModel、Repository 接口
-│       ├── androidMain/      # Android 入口、Firebase Repository
-│       ├── jvmMain/          # Desktop 入口（窗口配置 420×900dp）
-│       ├── iosMain/          # iOS 入口
-│       └── webMain/          # Web 入口（WasmJS）
-├── shared/                   # 共享业务逻辑模块
-├── server/                   # Ktor 后端服务
-├── iosApp/                   # iOS 壳工程
-└── gradle/                   # 版本目录 & Wrapper
+```text
+composeApp/src/commonMain      # 跨平台 UI 与通用业务逻辑
+composeApp/src/androidMain     # Android 平台实现
+composeApp/src/jvmMain         # 桌面端实现
+composeApp/src/wasmJsMain      # Web/Wasm 实现
+composeApp/src/iosMain         # iOS 实现
 ```
 
----
+### server
 
-## 5. 迁移期间修复的关键问题
+`server` 是 Ktor 后端模块。它是当前电影数据和媒体资源的唯一来源。
 
-1.  **Firebase Desktop 崩溃**: 移除了在 JVM 上无法自动初始化的 Firebase 代码，改用本地 JSON 方案。
-2.  **资源路径规范**: 修复了 `database.json` 位置错误导致无法生成 Resource Accessors 的问题（必须放在 `files/` 目录下）。
-3.  **类型推导错误**: 修复了 `MainViewModel` 丢失导入导致的 `collectAsState` 和 `LazyRow` 编译错误。
-4.  **UI 布局偏差**: 修正了海报在 `LazyRow` 中填满全屏的问题，固定为 `140×200dp`。
-5.  **Desktop 窗口高度不足**: 设置默认窗口为 `420×900dp`，充分展示电影列表。
-6.  **Desktop 横向滚动失效**: 新增 `ScrollableLazyRow` 组件，支持鼠标滚轮横向浏览海报。
-7.  **Web 目标配置**: 添加了 WasmJS 目标及 `webMain` 源码集的基础代码框架。
+主要职责：
 
----
+- 从 classpath 读取 `database.json`。
+- 通过 `/api/movies` 返回电影 JSON。
+- 通过 `/media` 暴露海报和演员图片。
+- 允许跨域请求，供 Web 客户端访问。
 
-## 6. 项目状态
+关键目录：
 
-目前项目已达到 **MVP (最小可行性产品)** 阶段：
-- ✅ **Android**: 正常运行，Firebase 数据加载，海报显示，详情页导航。
-- ✅ **Desktop**: 正常运行，本地 JSON 数据，鼠标滚轮横向滚动，窗口尺寸优化。
-- ⏳ **iOS**: 代码就绪，需 macOS 构建验证。
-- ✅ **Web (WasmJS)**: 正常运行。通过 `expect/actual` 隔离了 `Ktor` 引擎和 `Coil` 配置，解决了 Wasm 下的编译冲突。
+```text
+server/src/main/kotlin/org/example/project/Application.kt
+server/src/main/resources/database.json
+server/src/main/resources/media/posters
+server/src/main/resources/media/actors
+```
 
----
+### shared
 
-## 7. Git 提交记录参考
-- 初始迁移：完成 UI 转换。
-- 导航增强：实现跨平台返回栈。
-- 稳定性修复：解决 Firebase 桌面端兼容性与资源路径问题。
-- 图片增强：配置 Coil 3 全平台网络加载。
-- Desktop UX 优化：窗口尺寸 + 鼠标滚轮横向滚动。
-- Web 支持：添加 WasmJS 目标及 webMain 基础代码。
+`shared` 是共享模块，当前用于放置客户端和服务端都需要引用的通用内容。
+
+当前关键内容：
+
+```text
+shared/src/commonMain/kotlin/org/example/project/Constants.kt
+```
+
+其中 `SERVER_PORT = 8080` 是服务端默认端口。
+
+### iosApp
+
+`iosApp` 是 iOS 宿主工程。Compose Multiplatform 的共享 UI 会被 iOS 工程承载运行。
+
+## 服务端接口
+
+服务端默认地址：
+
+```text
+http://127.0.0.1:8080
+```
+
+当前接口：
+
+```text
+GET /
+GET /api/movies
+GET /media/...
+```
+
+`/api/movies` 返回内容来自：
+
+```text
+server/src/main/resources/database.json
+```
+
+服务端读取 JSON 时会兼容 UTF-8 BOM，避免文件开头不可见字符导致客户端解析失败。不过仍建议将 `database.json` 保存为 UTF-8 without BOM。
+
+静态资源接口：
+
+```text
+GET /media/posters/{fileName}
+GET /media/actors/{fileName}
+```
+
+对应文件目录：
+
+```text
+server/src/main/resources/media/posters
+server/src/main/resources/media/actors
+```
+
+示例图片地址：
+
+```text
+http://127.0.0.1:8080/media/posters/bad-boys.jpg
+```
+
+## 客户端数据读取
+
+客户端通过 `ServerMainRepository` 请求：
+
+```text
+{serverBaseUrl}/api/movies
+```
+
+返回数据解析后，UI 使用电影对象中的海报和演员图片路径进行渲染。图片加载使用 Coil 3，并在 Android、桌面端和 Web 端使用 Ktor 网络 fetcher。
+
+关键文件：
+
+```text
+composeApp/src/commonMain/kotlin/org/example/project/repository/ServerMainRepository.kt
+composeApp/src/commonMain/kotlin/org/example/project/ImageLoader.kt
+composeApp/src/androidMain/kotlin/org/example/project/ImageLoader.kt
+composeApp/src/jvmMain/kotlin/org/example/project/ImageLoader.kt
+composeApp/src/wasmJsMain/kotlin/org/example/project/ImageLoader.kt
+```
+
+## 平台服务端地址
+
+客户端通过 `expect/actual` 为不同平台提供默认服务端地址。
+
+```text
+commonMain:
+composeApp/src/commonMain/kotlin/org/example/project/repository/ServerMainRepository.kt
+
+Android:
+composeApp/src/androidMain/kotlin/org/example/project/repository/AndroidServerConfig.kt
+
+Desktop:
+composeApp/src/jvmMain/kotlin/org/example/project/repository/DesktopMainRepository.kt
+
+Web:
+composeApp/src/webMain/kotlin/org/example/project/repository/WebMainRepository.kt
+
+iOS:
+composeApp/src/iosMain/kotlin/org/example/project/repository/IosMainRepository.kt
+```
+
+当前默认值：
+
+```text
+Android -> http://192.168.2.12:8080
+Desktop -> http://localhost:8080
+Web     -> http://localhost:8080
+iOS     -> http://localhost:8080
+```
+
+Android 真机需要访问电脑局域网 IP。如果换了网络、电脑 IP 改变，或者使用模拟器，需要修改 `AndroidServerConfig.kt`。Android 模拟器一般使用：
+
+```text
+http://10.0.2.2:8080
+```
+
+iOS 真机运行时，`localhost` 指的是手机本机，不是开发电脑。真机调试时也需要改成开发电脑的局域网 IP。
+
+## 图片资源规范
+
+所有服务端图片应放在：
+
+```text
+server/src/main/resources/media/posters
+server/src/main/resources/media/actors
+```
+
+`database.json` 中推荐使用以 `/media/` 开头的相对 URL：
+
+```text
+"/media/posters/dune-part-two.jpg"
+"/media/actors/timothee-chalamet.jpg"
+```
+
+这样客户端可以按当前平台服务端地址自动拼成完整 URL。
+
+旧的客户端资源目录 `composeApp/src/commonMain/composeResources/files` 不再作为电影数据源使用。
+
+## 运行方式
+
+启动服务端：
+
+```powershell
+.\gradlew.bat :server:run
+```
+
+运行 Android：
+
+```powershell
+.\gradlew.bat :composeApp:installDebug
+```
+
+运行桌面端：
+
+```powershell
+.\gradlew.bat :composeApp:run
+```
+
+运行 Web 端：
+
+```powershell
+.\gradlew.bat :composeApp:wasmJsBrowserDevelopmentRun
+```
+
+iOS 端需要在 macOS 上通过 Xcode 打开 `iosApp` 运行。
+
+## 常见问题
+
+### 能显示电影列表，但不能显示图片
+
+优先检查：
+
+1. `database.json` 中图片路径是否以 `/media/` 开头。
+2. 对应图片文件是否存在于 `server/src/main/resources/media`。
+3. 浏览器能否直接打开图片 URL。
+4. Android 或 iOS 真机是否使用了正确的电脑局域网 IP。
+5. Logcat 中 `MyVRMovies` 输出的海报 URL 是否正确。
+
+### Android 不能访问服务端
+
+优先检查：
+
+1. 服务端是否使用 `.\gradlew.bat :server:run` 启动。
+2. 服务端日志是否显示 `Responding at http://127.0.0.1:8080`。
+3. 电脑防火墙是否允许 8080 端口。
+4. 手机和电脑是否连接同一个网络。
+5. `AndroidServerConfig.kt` 中 IP 是否是当前电脑 IP。
+
+### JSON 解析失败
+
+如果日志出现类似 “Expected start of the object, but had BOM” 的错误，说明 JSON 文件开头可能带有 UTF-8 BOM。当前代码已经做兼容处理，但推荐继续保持 `database.json` 为 UTF-8 without BOM。
+
+## 当前技术栈
+
+- Kotlin Multiplatform
+- Compose Multiplatform
+- Ktor Server
+- Ktor Client
+- Kotlinx Serialization
+- Coil 3
+- Gradle Kotlin DSL
+
+## 已知 Gradle 提示
+
+Gradle 可能输出 Kotlin 默认层级模板未应用的警告，原因是项目里显式配置了部分 source set 的 `dependsOn` 关系。这个提示不影响服务端接口和图片资源的工作。
+
+## 推荐检查命令
+
+服务端测试：
+
+```powershell
+.\gradlew.bat :server:test
+```
+
+客户端编译：
+
+```powershell
+.\gradlew.bat :composeApp:compileDebugKotlinAndroid :composeApp:compileKotlinJvm :composeApp:compileKotlinWasmJs
+```
+
+启动服务端：
+
+```powershell
+.\gradlew.bat :server:run
+```
+
+## 维护建议
+
+新增电影时，需要同时更新：
+
+1. `server/src/main/resources/database.json`
+2. `server/src/main/resources/media/posters`
+3. `server/src/main/resources/media/actors`
+
+更新后建议至少运行服务端测试。如果改动涉及客户端网络、模型或图片加载，还建议运行 Android、桌面端和 Web 的 Kotlin 编译检查。

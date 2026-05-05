@@ -48,8 +48,8 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
-            implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.4")
-            implementation("io.ktor:ktor-client-cio:3.0.3")
+            implementation("io.coil-kt.coil3:coil-network-ktor3:3.0.4")
+            implementation("io.ktor:ktor-client-okhttp:3.0.3")
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -77,12 +77,21 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
+
+        val iosMain by creating {
+            dependsOn(commonMain.get())
+            dependencies {
+                implementation("io.ktor:ktor-client-darwin:3.0.3")
+            }
+        }
+        iosArm64Main.get().dependsOn(iosMain)
+        iosSimulatorArm64Main.get().dependsOn(iosMain)
+
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
             // 显式指定 JVM 版 GitLive Firebase，防止误用 Android 版
             implementation("dev.gitlive:firebase-app-jvm:1.13.0")
-            implementation("dev.gitlive:firebase-database-jvm:1.13.0")
             // Ktor OkHttp 引擎用于 Desktop 图片加载
             implementation("io.ktor:ktor-client-okhttp:3.0.3")
             // Ktor CIO for JVM

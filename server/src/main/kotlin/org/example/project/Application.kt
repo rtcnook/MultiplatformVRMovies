@@ -1,15 +1,18 @@
 package org.example.project
 
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.http.content.*
-import io.ktor.server.netty.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
 import io.ktor.http.ContentType
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
+import io.ktor.server.application.Application
+import io.ktor.server.application.call
+import io.ktor.server.application.install
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.http.content.staticResources
+import io.ktor.server.netty.Netty
+import io.ktor.server.plugins.cors.routing.CORS
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.get
+import io.ktor.server.routing.routing
 
 fun main() {
     embeddedServer(Netty, port = SERVER_PORT, host = "0.0.0.0", module = Application::module)
@@ -17,6 +20,12 @@ fun main() {
 }
 
 fun Application.module() {
+    install(CORS) {
+        anyHost()
+        allowMethod(HttpMethod.Get)
+        allowHeader(HttpHeaders.ContentType)
+    }
+
     routing {
         get("/") {
             call.respondText("Ktor: ${Greeting().greet()}")
@@ -26,21 +35,14 @@ fun Application.module() {
             call.respondText(loadMoviesJson(), ContentType.Application.Json)
         }
 
-        staticFiles("/files", findMoviesDataDirectory().toFile())
+        staticResources("/media", "media")
     }
 }
 
 private fun loadMoviesJson(): String {
-    val dataFile = findMoviesDataDirectory().resolve("database.json")
-    return Files.readString(dataFile)
-}
-
-private fun findMoviesDataDirectory(): Path {
-    val candidates = listOf(
-        Paths.get("composeApp", "src", "commonMain", "composeResources", "files"),
-        Paths.get("..", "composeApp", "src", "commonMain", "composeResources", "files")
-    )
-
-    return candidates.firstOrNull { Files.isDirectory(it) }
-        ?: error("Cannot find composeResources/files")
+    return object {}.javaClass.classLoader
+        .getResource("database.json")
+        ?.readText()
+        ?.trimStart('\uFEFF')
+        ?: error("Cannot find server resource database.json")
 }

@@ -1,6 +1,5 @@
 package org.example.project
 
-import androidx.compose.runtime.Composable
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.network.ktor3.KtorNetworkFetcherFactory
