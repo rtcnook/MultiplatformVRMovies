@@ -42,6 +42,24 @@ jobs:
           path: |
             composeApp/build/dist/wasmJs/productionExecutable
 
+  ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build iOS frameworks
+        run: ./gradlew packageIosFrameworks
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ios-frameworks
+          path: |
+            composeApp/build/bin/iosArm64/releaseFramework
+            composeApp/build/bin/iosSimulatorArm64/releaseFramework
+
   desktop:
     strategy:
       fail-fast: false
@@ -55,12 +73,10 @@ jobs:
               composeApp/build/compose/binaries/main/msi/*.msi
           - os: macos-latest
             name: macos
-            command: ./gradlew packageDesktopCurrent packageIosFrameworks
+            command: ./gradlew packageDesktopCurrent
             artifact-path: |
               composeApp/build/compose/binaries/main/app
               composeApp/build/compose/binaries/main/dmg/*.dmg
-              composeApp/build/bin/iosArm64/releaseFramework
-              composeApp/build/bin/iosSimulatorArm64/releaseFramework
           - os: ubuntu-latest
             name: linux
             command: ./gradlew packageDesktopCurrent
