@@ -83,6 +83,7 @@ kotlin {
             dependsOn(commonMain.get())
             dependencies {
                 implementation("io.ktor:ktor-client-darwin:3.0.3")
+                implementation("io.coil-kt.coil3:coil-network-ktor3:3.0.4")
             }
         }
         iosArm64Main.get().dependsOn(iosMain)
