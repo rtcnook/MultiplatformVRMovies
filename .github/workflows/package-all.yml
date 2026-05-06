@@ -33,7 +33,7 @@ jobs:
         include:
           - os: windows-latest
             name: windows
-            command: gradlew.bat packageDesktopCurrent
+            command: ./gradlew.bat packageDesktopCurrent
             artifact-path: |
               composeApp/build/compose/binaries/main/app
               composeApp/build/compose/binaries/main/msi/*.msi
