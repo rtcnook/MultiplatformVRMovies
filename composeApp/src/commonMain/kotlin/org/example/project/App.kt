@@ -1,53 +1,92 @@
 package org.example.project
 
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.ui.NavDisplay
+import androidx.savedstate.serialization.SavedStateConfiguration
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
 import org.example.project.domain.FilmItemModel
 import org.example.project.ui.DetailScreen
 import org.example.project.ui.IntroScreen
 import org.example.project.ui.LoginScreen
 import org.example.project.ui.MainScreen
 
-// 导航状态
-sealed class Screen {
-    object Splash : Screen()
-    object Login : Screen()
-    object Main : Screen()
-    data class Detail(val film: FilmItemModel) : Screen()
+@Serializable
+private sealed interface AppRoute : NavKey
+
+@Serializable
+private data object SplashRoute : AppRoute
+
+@Serializable
+private data object LoginRoute : AppRoute
+
+@Serializable
+private data object MainRoute : AppRoute
+
+@Serializable
+private data class DetailRoute(val film: FilmItemModel) : AppRoute
+
+private val navSavedStateConfiguration = SavedStateConfiguration {
+    serializersModule = SerializersModule {
+        polymorphic(NavKey::class) {
+            subclass(SplashRoute::class, SplashRoute.serializer())
+            subclass(LoginRoute::class, LoginRoute.serializer())
+            subclass(MainRoute::class, MainRoute.serializer())
+            subclass(DetailRoute::class, DetailRoute.serializer())
+        }
+    }
 }
 
 @Composable
 fun App() {
-    // 配置 Coil 3 的网络引擎
     setSingletonImageLoaderFactory { context ->
         getAsyncImageLoader(context)
     }
 
     MaterialTheme {
-        // 用列表作为返回栈
-        val backStack = remember { mutableStateListOf<Screen>(Screen.Splash) }
-        val currentScreen = backStack.last()
+        val backStack = rememberNavBackStack(navSavedStateConfiguration, SplashRoute)
 
-        fun navigate(screen: Screen) {
-            backStack.add(screen)
-        }
+        NavDisplay(
+            backStack = backStack,
+            onBack = { backStack.removeLastOrNull() },
+            entryProvider = { route ->
+                when (route) {
+                    SplashRoute -> NavEntry(route) {
+                        IntroScreen(
+                            onGetInClick = { backStack.add(LoginRoute) }
+                        )
+                    }
 
-        when (val screen = currentScreen) {
-            is Screen.Splash -> IntroScreen(
-                onGetInClick = { navigate(Screen.Login) }
-            )
-            is Screen.Login -> LoginScreen(
-                onLoginClick = { navigate(Screen.Main) }
-            )
-            is Screen.Main -> MainScreen(
-                onItemClick = { film -> navigate(Screen.Detail(film)) }
-            )
-            is Screen.Detail -> DetailScreen(
-                film = screen.film,
-                onBackClick = { backStack.removeLastOrNull() }
-            )
-        }
+                    LoginRoute -> NavEntry(route) {
+                        LoginScreen(
+                            onLoginClick = { backStack.add(MainRoute) }
+                        )
+                    }
+
+                    MainRoute -> NavEntry(route) {
+                        MainScreen(
+                            onItemClick = { film -> backStack.add(DetailRoute(film)) }
+                        )
+                    }
+
+                    is DetailRoute -> NavEntry(route) {
+                        DetailScreen(
+                            film = route.film,
+                            onBackClick = { backStack.removeLastOrNull() }
+                        )
+                    }
+
+                    else -> error("Unknown route: $route")
+                }
+            }
+        )
     }
 }
