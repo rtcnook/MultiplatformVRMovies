@@ -1,4 +1,4 @@
-rootProject.name = "MyVRMoviesMultiplatform"
+rootProject.name = "MultiplatformVRMovies"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
